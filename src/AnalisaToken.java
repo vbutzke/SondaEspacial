@@ -1,17 +1,15 @@
+import java.security.InvalidParameterException;
+
 
 public class AnalisaToken {
 
 	private String[] direcoes = {"FRENTE", "ESQUERDA", "DIREITA", "TRAS"};
 	private String[] ordem = {"ENTAO","APOS"};
-	
-	public void analisa(String comandos[]){
-		
-		for(int i=0; i<comandos.length; i++){
-			
-		}
-		
-	}
-	
+	private int x = 0;
+	private int y = 0;
+	private int distanciaCaminhada = 0;
+
+//---------------------- Token ----------------------
 	public String [] verificaPrecedencia(String[] token){
 		
 		int contador = 0;
@@ -64,16 +62,114 @@ public class AnalisaToken {
 	public void interpretaToken(String token){
 		
 		//verifica se faz sentido a ordem
-		//chama o comando para caminhar
+		
+	}
+
+//---------------------- Mapa ----------------------
+	public void moveSonda(String comandos[]){
+		
+		int contador = 0;
+		char eixo;
+		
+		while(contador<comandos.length){
+			
+			System.out.print("Instrução: "+comandos[contador]+" ");
+			
+			switch (comandos[contador]){
+			case "FRENTE":
+				eixo = 'y';
+				contador++; //conta para pegar o próximo que é o valor
+				converteValorEcaminha(comandos[contador], false, eixo);
+				break;
+				
+			case "ESQUERDA":
+				eixo = 'x';
+				contador++;
+				converteValorEcaminha(comandos[contador], true, eixo);
+				break;
+				
+			case "DIREITA":
+				eixo = 'x';
+				contador++;
+				converteValorEcaminha(comandos[contador], false, eixo);
+				break;
+				
+			case "TRAS":
+				eixo = 'y';
+				contador++;
+				converteValorEcaminha(comandos[contador], true, eixo);
+				break;
+				
+			}
+			//passa para o próximo comando
+			contador++;
+		}
 		
 	}
 	
-	public void caminha(){
+	public void converteValorEcaminha(String valor, boolean negativo, char eixo){
 		
-		//modifica o mapa
-		//matriz
-		//0,0 no centro
-	
+		int passos = 0;
+		
+		try{
+			passos = Integer.parseInt(valor);
+			if(negativo){
+				passos = (-1)*passos;
+			}
+			
+			System.out.println(passos);
+			
+			caminha(eixo, passos);
+		}catch(NumberFormatException e){
+			System.out.println("Não foi possível mover a Sonda Espacial. É necessário um valor numérico após o comando de movimento.");
+		}catch(InvalidParameterException e){
+			throw e;
+		}
 	}
+	
+	public void caminha(char eixo, int valor) throws InvalidParameterException{
+		
+		//valor já vem convertido para negativo quando necessário
+		if(eixo == 'x'){
+			setX(getX()+valor);
+		}else if(eixo == 'y'){
+			setY(getY()+valor);
+		}else{
+			throw new InvalidParameterException("Não foi possível mudar de posição. Eixo de movimentação inválido");
+		}
+		
+		setDistanciaCaminhada(getDistanciaCaminhada()+Math.abs(valor));
+		
+		System.out.println("x: "+getX()+", y: "+getY()+", distância: "+getDistanciaCaminhada());
+		
+	}
+
+//---------------------- Gets e Sets ----------------------
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	public int getDistanciaCaminhada() {
+		return distanciaCaminhada;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+	
+	public void setDistanciaCaminhada(int distanciaCaminhada) {
+		this.distanciaCaminhada = distanciaCaminhada;
+	}
+	
+	
+	
 
 }

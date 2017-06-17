@@ -8,14 +8,17 @@ public class SondaEspacial {
 		
 		AnalisaToken analisador = new AnalisaToken();
 		String actualLine = "";
-		String [] frase;
+		String [] comandos;
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader("foo.in"));
 	         
 	        while ((actualLine = br.readLine()) != null) {
-	        	frase = analisador.verificaPrecedencia(actualLine.split(" "));
-	        	 //analisador.analisa(frase);
+	        	//comandos = analisador.verificaPrecedencia(actualLine.split(" "));
+	        	
+	        	//retornar frase somente com os comandos, tipo direita 10, suprimir os entao e etc
+	        	comandos = actualLine.split(" "); //teste
+	        	analisador.moveSonda(comandos);
 
 	        }       
 	         br.close();
