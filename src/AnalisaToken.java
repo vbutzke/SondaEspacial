@@ -1,68 +1,142 @@
 import java.security.InvalidParameterException;
-
+import java.util.Arrays;
 
 public class AnalisaToken {
 
-	private String[] direcoes = {"FRENTE", "ESQUERDA", "DIREITA", "TRAS"};
-	private String[] ordem = {"ENTAO","APOS"};
 	private int x = 0;
 	private int y = 0;
 	private int distanciaCaminhada = 0;
 
+/*Precedência
+ * Problemas: ENTAO, APOS e ()
+ * Trata parênteses como se fosse um comando só no primeiro momento
+ * - Primeiro passo é eliminar todos os APOS substituindo-os por ENTAO e mudando os comandos de lugar
+ * - Segundo passo é eliminar os parênteses substituindo todo ")" por ENTAO caso o próximo token não seja um ENTAO
+*/
+	
 //---------------------- Token ----------------------
-	public String [] verificaPrecedencia(String[] token){
+	public String[] precedencia(String [] comandos){
 		
-		int contador = 0;
-		String precedente [] = new String [token.length];
-		String subsequente[] = new String [token.length];
-		String fraseFinal[] = new String [token.length];
-		int indexPrec = 0;
-		int indexSubs = 0;
-		int indexFinal = 0;
+		comandos = formataComandos(comandos);
 		
-//fazer função recursiva adicional que inclui essa lógica com um switch
-//Enquanto a frase não for totalmente analisada, segue
-		while(contador<token.length){
-			//Se o token tem um parênteses, indica precedência, então lê tudo dentro dos parênteses e adiciona no array de precedência
-			if(token[contador].contains("(")){
-				while(!token[contador].contains(")")){
-					precedente[indexPrec] = token[contador];
-					indexPrec++;
-					contador++;
-				}
-				precedente[indexPrec] = token[contador];
-				indexPrec++;
-			}else{
-				//Se o token não tem parênteses, adiciona no array de subsequência
-				subsequente[indexSubs] = token[contador];
-				indexSubs++;
+		if(comandos.length>2){
+			comandos = eliminaApos(comandos);
+			comandos = eliminaParenteses(comandos);
+			comandos = eliminaEntao(comandos);
+		}
+		
+		comandos = eliminaEspacosEmBranco(comandos);
+		
+		return comandos;
+		
+	}
+	
+	public String[] formataComandos(String[] comandos){
+		
+		String [] comandosFormatados = new String [comandos.length];
+		int indexFormato = 0;
+		String entreParenteses = "";
+		int indexAnterior = 0;
+		int [] indexAuxiliar = new int[1];
+		int nulos = 0;
+		
+		//procura token que contenha "(". Se não contém, adiciona em comandos formatados. Se tem, concatena até ")" e adiciona em comandos formatados
+		for(int i=0; i<comandos.length; i++){
+			indexAuxiliar[0] = i;
+			indexAnterior = i;
+			if(comandos[i].contains("(")){
+				entreParenteses = concatena(Arrays.copyOfRange(comandos, i, comandos.length), indexAuxiliar);
+				comandos[indexAnterior] = entreParenteses;
 			}
-			contador++;
+			
+			comandosFormatados[indexFormato] = comandos[indexAnterior];
+			indexFormato++;
+			i=indexAuxiliar[0];
 		}
 		
-		formaFraseFinal(fraseFinal, precedente, indexFinal);
-		formaFraseFinal(fraseFinal, subsequente, indexFinal);
+		nulos = contaNulos(comandosFormatados);
+		comandosFormatados = eliminaNulos(comandosFormatados, nulos);
+		return comandosFormatados;
+	}
+	
+//deixa o que tem nos parênteses como se fosse um comando só
+	public String[] eliminaApos(String [] comandos){
+		int i = 1;
+		String anterior = comandos[i-1];
+		String posterior = comandos[i+1];
+		String auxiliar = "";
 		
-		return fraseFinal;
+		int indexApos = 0;
+		
+		while(i<comandos.length){
+			anterior = comandos[i-1];
+			if(i<comandos.length-1){
+				posterior = comandos[i+1];
+			}
+			
+			if(comandos[i].contains("APOS")){
+				indexApos = comandos[i].indexOf("APOS");
+				if(comandos[i].contains("(")){
+					auxiliar = comandos[i].substring(indexApos+4)+"ENTAO"+comandos[i].substring(0, indexApos);
+					comandos[i] = auxiliar;
+					auxiliar = "";
+				}else{
+					auxiliar = anterior;
+					anterior = comandos[i-2];
+					comandos[i-2] = posterior;
+					comandos[i-1] = comandos[i+2];
+					comandos[i+1] = anterior;
+					comandos[i+2] = auxiliar;
+					comandos[i] = "ENTAO";
+				}
+				
+			}
+//avança duas posições pois passa pelo posterior, como A APOS B ENTAO C anterior = A, atual = APOS, posterior = B, atual+2 = ENTAO, anterior = B, posterior = C
+			i++;
+		}
+			
+		return comandos;
+	}
+	
+//remove parênteses somente porque todos os comandos já estão com o ENTAO antes, então a precedência dos parênteses não existe mais
+	public String [] eliminaParenteses(String [] comandos){
+			
+		for(int i=0; i<comandos.length; i++){
+			comandos[i] = comandos[i].replace("(", "");
+			comandos[i] = comandos[i].replace(")", "");
+		}
+			
+		return comandos;
 		
 	}
 	
-	public void formaFraseFinal(String [] fraseFinal, String [] frase, int indexFinal){
+	public String [] eliminaEntao(String [] comandos){
 		
-		int indexFrase = 0;
-		
-		while(!frase[indexFrase].equals("/0")){
-			fraseFinal[indexFinal] = frase[indexFrase];
-			indexFrase++;
-			indexFinal++;
+		for(int i=0; i<comandos.length; i++){
+			comandos[i] = comandos[i].replaceAll("ENTAO", "");
 		}
 		
+		return comandos;
 	}
 	
-	public void interpretaToken(String token){
+	public String[] eliminaEspacosEmBranco(String[] comandos){
 		
-		//verifica se faz sentido a ordem
+		int brancos = contaEspacosEmBranco(comandos);
+		String [] comandosSemEspacos = new String[(comandos.length)*2-brancos];
+		int indexComandosSemEspacos = 0;
 		
+		for(int i=0; i<comandos.length; i++){
+			if(!comandos[i].equals(" ") && !comandos[i].equals("")){
+				String[] auxiliar = eliminaSeparadoresAuxiliares(comandos[i]);		
+				for(int j=0; j<auxiliar.length; j++){
+					comandosSemEspacos[indexComandosSemEspacos] = auxiliar[j];
+					indexComandosSemEspacos++;
+				}
+			}
+		}
+		comandosSemEspacos = eliminaNulos(comandosSemEspacos, contaNulos(comandosSemEspacos));
+		return comandosSemEspacos;
+	
 	}
 
 //---------------------- Mapa ----------------------
@@ -144,6 +218,67 @@ public class AnalisaToken {
 		
 	}
 
+//---------------------- Auxiliares ----------------------	
+	public int contaNulos(String[] comandos){
+		
+		int nulos = 0;
+		
+		for(int i=0; i<comandos.length; i++){
+			if(comandos[i] == null){
+				nulos++;
+			}
+		}
+		
+		return nulos;
+	}
+	
+	public int contaEspacosEmBranco(String[] comandos){
+		
+		int brancos = 0;
+		
+		for(int i=0; i<comandos.length; i++){
+			if(comandos[i].equals(" ") || comandos[i].equals("")){
+				brancos++;
+			}
+		}
+		
+		return brancos;
+	}
+	
+	public String[] eliminaSeparadoresAuxiliares(String comandos){
+		
+		String[] auxiliar = comandos.split("/");
+		return auxiliar;
+		
+	}
+	
+	public String [] eliminaNulos(String[] comandos, int nulos){
+
+		String[] comandosSemNulos = new String [comandos.length-nulos];
+		
+		for(int i=0; i<comandosSemNulos.length; i++){
+			comandosSemNulos[i] = comandos[i];
+		}
+		
+		return comandosSemNulos;
+	}
+	
+	public String concatena(String[] tokens, int [] index){
+		
+		int contador = 0;
+		String concatenado = "";
+		
+		while(!tokens[contador].contains(")")){
+			concatenado = concatenado+"/"+tokens[contador];
+			contador++;
+		}
+		
+		concatenado = concatenado+"/"+tokens[contador];
+		index[0]+=contador;
+		return concatenado;
+		
+	}
+	
 //---------------------- Gets e Sets ----------------------
 	public int getX() {
 		return x;
@@ -168,8 +303,5 @@ public class AnalisaToken {
 	public void setDistanciaCaminhada(int distanciaCaminhada) {
 		this.distanciaCaminhada = distanciaCaminhada;
 	}
-	
-	
-	
 
 }
