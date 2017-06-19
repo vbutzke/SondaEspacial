@@ -6,6 +6,7 @@ public class AnalisaToken {
 	private int x = 0;
 	private int y = 0;
 	private int distanciaCaminhada = 0;
+	private char direcao = 'N';
 
 /*Precedência
  * Problemas: ENTAO, APOS e ()
@@ -148,33 +149,31 @@ public class AnalisaToken {
 		while(contador<comandos.length){
 			
 			System.out.print("Instrução: "+comandos[contador]+" ");
+			mudaDirecao(comandos[contador]);
 			
-			switch (comandos[contador]){
-			case "FRENTE":
+			switch(getDirecao()){
+			case 'N':
 				eixo = 'y';
 				contador++; //conta para pegar o próximo que é o valor
 				converteValorEcaminha(comandos[contador], false, eixo);
 				break;
-				
-			case "ESQUERDA":
+			case 'L':
 				eixo = 'x';
-				contador++;
-				converteValorEcaminha(comandos[contador], true, eixo);
-				break;
-				
-			case "DIREITA":
-				eixo = 'x';
-				contador++;
+				contador++; //conta para pegar o próximo que é o valor
 				converteValorEcaminha(comandos[contador], false, eixo);
 				break;
-				
-			case "TRAS":
-				eixo = 'y';
-				contador++;
+			case 'O':
+				eixo = 'x';
+				contador++; //conta para pegar o próximo que é o valor
 				converteValorEcaminha(comandos[contador], true, eixo);
 				break;
-				
+			case 'S':
+				eixo = 'y';
+				contador++; //conta para pegar o próximo que é o valor
+				converteValorEcaminha(comandos[contador], true, eixo);
+				break;
 			}
+			
 			//passa para o próximo comando
 			contador++;
 		}
@@ -248,6 +247,15 @@ public class AnalisaToken {
 	public String[] eliminaSeparadoresAuxiliares(String comandos){
 		
 		String[] auxiliar = comandos.split("/");
+		if(auxiliar[0]==null || auxiliar[0].isEmpty()){
+			for(int i=0; i<auxiliar.length-1; i++){
+				auxiliar[i] = auxiliar[i+1];
+			}
+			auxiliar[auxiliar.length-1] = null;
+		}
+		
+		auxiliar = eliminaNulos(auxiliar, contaNulos(auxiliar));
+		
 		return auxiliar;
 		
 	}
@@ -279,7 +287,74 @@ public class AnalisaToken {
 		
 	}
 	
-//---------------------- Gets e Sets ----------------------
+	public void mudaDirecao(String movimento){
+		
+		if(getDirecao() == 'N'){
+			switch (movimento){
+			case "FRENTE":
+				setDirecao('N');
+				break;
+			case "ESQUERDA":
+				setDirecao('O');
+				break;
+			case "DIREITA":
+				setDirecao('L');
+				break;
+			case "TRAS":
+				setDirecao('S');
+				break;
+			}
+		}else if(getDirecao() == 'L'){
+			switch (movimento){
+			case "FRENTE":
+				setDirecao('L');
+				break;
+			case "ESQUERDA":
+				setDirecao('N');
+				break;
+			case "DIREITA":
+				setDirecao('S');
+				break;
+			case "TRAS":
+				setDirecao('O');
+				break;
+			}	
+		}else if(getDirecao() == 'O'){
+			switch (movimento){
+			case "FRENTE":
+				setDirecao('O');
+				break;
+			case "ESQUERDA":
+				setDirecao('S');
+				break;
+			case "DIREITA":
+				setDirecao('N');
+				break;
+			case "TRAS":
+				setDirecao('L');
+				break;
+			}
+		}else if(getDirecao() == 'S'){
+			switch (movimento){
+			case "FRENTE":
+				setDirecao('S');
+				break;
+			case "ESQUERDA":
+				setDirecao('L');
+				break;
+			case "DIREITA":
+				setDirecao('O');
+				break;
+			case "TRAS":
+				setDirecao('N');
+				break;
+			}
+		}else{
+			//exceção
+		}
+	}
+
+	//---------------------- Gets e Sets ----------------------
 	public int getX() {
 		return x;
 	}
@@ -302,6 +377,14 @@ public class AnalisaToken {
 	
 	public void setDistanciaCaminhada(int distanciaCaminhada) {
 		this.distanciaCaminhada = distanciaCaminhada;
+	}
+	
+	public char getDirecao() {
+		return direcao;
+	}
+
+	public void setDirecao(char direcao) {
+		this.direcao = direcao;
 	}
 
 }
