@@ -7,7 +7,8 @@ Objetivo:
 Estrutura:
 	A estrutura de movimentação da Sonda Espacial é determinada através da seguinte definição.
 	comando -> comando ENTAO comando | comando APOS comando | (comando) | basico
-	basico -> FRENTE n | ESQUERDA n | DIREITA n | TRAS n
+	basico -> FRENTE n | ESQUERDA n | DIREITA n | TRAS n
+
 	
 	c1 ENTAO c2 -> executa c1 e depois executa c2
 	c1 APOS c2 -> executa c2 e depois executa c1
@@ -42,15 +43,15 @@ Funcionamento:
 
 
 Melhorias:
-	- Tratamento de exceção para comandos fora do padrão especificado
-	- Mecanismo de input para digitação dos comandos
-	- Interface gráfica para input
-	- Correção de comandos em tempo real
-	- Implementação de mapa para a Sonda
-	- Interface gráfica para visualização da movimentação da Sonda
-	- Suporte a Threads
-	- Expansão de espaço bidimensional para tridimensional
-	- Simulação de Sonda com movimento real (elíptico)
-	- Implementação de algortimo de colisão
-	- Geração de múltiplas Sondas simultaneamente
+	1. Tratamento de exceção para comandos fora do padrão especificado
+	2. Mecanismo de input para digitação dos comandos
+	3. Interface gráfica para input
+	4. Correção de comandos em tempo real
+	5. Implementação de mapa para a Sonda
+	6. Interface gráfica para visualização da movimentação da Sonda
+	7. Suporte a Threads
+	8. Expansão de espaço bidimensional para tridimensional
+	9. Simulação de Sonda com movimento real (elíptico)
+	10. Implementação de algortimo de colisão
+	11. Geração de múltiplas Sondas simultaneamente
 	
