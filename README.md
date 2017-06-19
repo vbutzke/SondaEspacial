@@ -43,6 +43,7 @@ Funcionamento:
 
 
 Melhorias:
+
 	1. Tratamento de exceção para comandos fora do padrão especificado
 	2. Mecanismo de input para digitação dos comandos
 	3. Interface gráfica para input
