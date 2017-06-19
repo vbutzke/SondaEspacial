@@ -7,13 +7,6 @@ public class AnalisaToken {
 	private int y = 0;
 	private int distanciaCaminhada = 0;
 	private char direcao = 'N';
-
-/*Precedência
- * Problemas: ENTAO, APOS e ()
- * Trata parênteses como se fosse um comando só no primeiro momento
- * - Primeiro passo é eliminar todos os APOS substituindo-os por ENTAO e mudando os comandos de lugar
- * - Segundo passo é eliminar os parênteses substituindo todo ")" por ENTAO caso o próximo token não seja um ENTAO
-*/
 	
 //---------------------- Token ----------------------
 	public String[] precedencia(String [] comandos){
