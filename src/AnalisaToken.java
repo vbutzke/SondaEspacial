@@ -28,13 +28,12 @@ public class AnalisaToken {
 	public String[] formataComandos(String[] comandos){
 		
 		String [] comandosFormatados = new String [comandos.length];
-		int indexFormato = 0;
 		String entreParenteses = "";
+		int indexFormato = 0;
 		int indexAnterior = 0;
 		int [] indexAuxiliar = new int[1];
 		int nulos = 0;
 		
-		//procura token que contenha "(". Se não contém, adiciona em comandos formatados. Se tem, concatena até ")" e adiciona em comandos formatados
 		for(int i=0; i<comandos.length; i++){
 			indexAuxiliar[0] = i;
 			indexAnterior = i;
@@ -42,32 +41,28 @@ public class AnalisaToken {
 				entreParenteses = concatena(Arrays.copyOfRange(comandos, i, comandos.length), indexAuxiliar);
 				comandos[indexAnterior] = entreParenteses;
 			}
-			
 			comandosFormatados[indexFormato] = comandos[indexAnterior];
 			indexFormato++;
 			i=indexAuxiliar[0];
 		}
-		
 		nulos = contaNulos(comandosFormatados);
 		comandosFormatados = eliminaNulos(comandosFormatados, nulos);
 		return comandosFormatados;
 	}
 	
-//deixa o que tem nos parênteses como se fosse um comando só
 	public String[] eliminaApos(String [] comandos){
-		int i = 1;
+		
+		int i = 1; //inicia em 1 para poder apontar para o anterior
+		int indexApos = 0;
 		String anterior = comandos[i-1];
 		String posterior = comandos[i+1];
-		String auxiliar = "";
-		
-		int indexApos = 0;
+		String auxiliar = "";	
 		
 		while(i<comandos.length){
 			anterior = comandos[i-1];
 			if(i<comandos.length-1){
 				posterior = comandos[i+1];
 			}
-			
 			if(comandos[i].contains("APOS")){
 				indexApos = comandos[i].indexOf("APOS");
 				if(comandos[i].contains("(")){
@@ -83,25 +78,20 @@ public class AnalisaToken {
 					comandos[i+2] = auxiliar;
 					comandos[i] = "ENTAO";
 				}
-				
-			}
-//avança duas posições pois passa pelo posterior, como A APOS B ENTAO C anterior = A, atual = APOS, posterior = B, atual+2 = ENTAO, anterior = B, posterior = C
+			} 
 			i++;
 		}
-			
 		return comandos;
 	}
 	
-//remove parênteses somente porque todos os comandos já estão com o ENTAO antes, então a precedência dos parênteses não existe mais
 	public String [] eliminaParenteses(String [] comandos){
 			
 		for(int i=0; i<comandos.length; i++){
 			comandos[i] = comandos[i].replace("(", "");
 			comandos[i] = comandos[i].replace(")", "");
 		}
-			
-		return comandos;
 		
+		return comandos;
 	}
 	
 	public String [] eliminaEntao(String [] comandos){
@@ -130,7 +120,6 @@ public class AnalisaToken {
 		}
 		comandosSemEspacos = eliminaNulos(comandosSemEspacos, contaNulos(comandosSemEspacos));
 		return comandosSemEspacos;
-	
 	}
 
 //---------------------- Mapa ----------------------
@@ -167,10 +156,8 @@ public class AnalisaToken {
 				break;
 			}
 			
-			//passa para o próximo comando
-			contador++;
+			contador++; //passa para o próximo comando
 		}
-		
 	}
 	
 	public void converteValorEcaminha(String valor, boolean negativo, char eixo){
@@ -182,9 +169,7 @@ public class AnalisaToken {
 			if(negativo){
 				passos = (-1)*passos;
 			}
-			
 			System.out.println(passos);
-			
 			caminha(eixo, passos);
 		}catch(NumberFormatException e){
 			System.out.println("Não foi possível mover a Sonda Espacial. É necessário um valor numérico após o comando de movimento.");
@@ -195,7 +180,6 @@ public class AnalisaToken {
 	
 	public void caminha(char eixo, int valor) throws InvalidParameterException{
 		
-		//valor já vem convertido para negativo quando necessário
 		if(eixo == 'x'){
 			setX(getX()+valor);
 		}else if(eixo == 'y'){
@@ -205,7 +189,6 @@ public class AnalisaToken {
 		}
 		
 		setDistanciaCaminhada(getDistanciaCaminhada()+Math.abs(valor));
-		
 		System.out.println("x: "+getX()+", y: "+getY()+", distância: "+getDistanciaCaminhada());
 		
 	}
@@ -281,69 +264,49 @@ public class AnalisaToken {
 	}
 	
 	public void mudaDirecao(String movimento){
+		giraSonda(movimento, criaDirecoes(getDirecao()));
+	}
+	
+	public char[] criaDirecoes(char direcaoAtual){
 		
-		if(getDirecao() == 'N'){
-			switch (movimento){
-			case "FRENTE":
-				setDirecao('N');
-				break;
-			case "ESQUERDA":
-				setDirecao('O');
-				break;
-			case "DIREITA":
-				setDirecao('L');
-				break;
-			case "TRAS":
-				setDirecao('S');
-				break;
-			}
-		}else if(getDirecao() == 'L'){
-			switch (movimento){
-			case "FRENTE":
-				setDirecao('L');
-				break;
-			case "ESQUERDA":
-				setDirecao('N');
-				break;
-			case "DIREITA":
-				setDirecao('S');
-				break;
-			case "TRAS":
-				setDirecao('O');
-				break;
-			}	
-		}else if(getDirecao() == 'O'){
-			switch (movimento){
-			case "FRENTE":
-				setDirecao('O');
-				break;
-			case "ESQUERDA":
-				setDirecao('S');
-				break;
-			case "DIREITA":
-				setDirecao('N');
-				break;
-			case "TRAS":
-				setDirecao('L');
-				break;
-			}
-		}else if(getDirecao() == 'S'){
-			switch (movimento){
-			case "FRENTE":
-				setDirecao('S');
-				break;
-			case "ESQUERDA":
-				setDirecao('L');
-				break;
-			case "DIREITA":
-				setDirecao('O');
-				break;
-			case "TRAS":
-				setDirecao('N');
-				break;
-			}
-		}else{
-			//exceção
+		char [] d = null;
+		switch(direcaoAtual){
+		case 'N':
+			char [] direcoesN = {'N', 'O', 'L', 'S'};
+			d = direcoesN;
+			break;
+		case 'O':
+			char [] direcoesO = {'O', 'S', 'N', 'L'};
+			d = direcoesO;
+			break;
+		case 'L':
+			char [] direcoesL = {'L', 'N', 'S', 'O'};
+			d = direcoesL;
+			break;
+		case 'S':
+			char [] direcoesS = {'S', 'L', 'O', 'N'};
+			d = direcoesS;
+			break;
+		}
+
+		return d;
+		
+	}
+	
+	public void giraSonda(String movimento, char[] direcoes){
+		switch (movimento){
+		case "FRENTE":
+			setDirecao(direcoes[0]);
+			break;
+		case "ESQUERDA":
+			setDirecao(direcoes[1]);
+			break;
+		case "DIREITA":
+			setDirecao(direcoes[2]);
+			break;
+		case "TRAS":
+			setDirecao(direcoes[3]);
+			break;
 		}
 	}
 
