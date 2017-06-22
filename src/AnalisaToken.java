@@ -7,6 +7,7 @@ public class AnalisaToken {
 	private int y = 0;
 	private int distanciaCaminhada = 0;
 	private char direcao = 'N';
+	private String retorno = "";
 	
 //---------------------- Token ----------------------
 	public String[] precedencia(String [] comandos){
@@ -341,6 +342,14 @@ public class AnalisaToken {
 
 	public void setDirecao(char direcao) {
 		this.direcao = direcao;
+	}
+	
+	public String getRetorno() {
+		return retorno;
+	}
+
+	public void setRetorno(String retorno) {
+		this.retorno = retorno;
 	}
 
 }
